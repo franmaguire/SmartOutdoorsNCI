@@ -1,0 +1,21 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=FE:B3:A7:F0:1C:5D:7A:E1:94:A2:3C:F2:78:7F:BA:57:06:F8:2A:0F%3Bx11108142.franmaguire.smartoutdoors
+
+    You can also add your credentials to an existing key, using this line:
+    FE:B3:A7:F0:1C:5D:7A:E1:94:A2:3C:F2:78:7F:BA:57:06:F8:2A:0F;x11108142.franmaguire.smartoutdoors
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <!-- This has setup as not packaged protected so that the package name can be changed during testing -->
+    <!-- This has setup as not device protected so that devices I do not own can use my API key -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAPsOhaba8IPoykZ3H7rgHTA7BVbqgvI5I</string>
+</resources>
