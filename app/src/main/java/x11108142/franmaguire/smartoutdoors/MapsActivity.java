@@ -3,6 +3,7 @@ package x11108142.franmaguire.smartoutdoors;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -37,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends AppCompatActivity
         implements
         OnMapReadyCallback,
+        GoogleMap.OnMapClickListener,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
         ActivityCompat.OnRequestPermissionsResultCallback {
@@ -45,6 +47,8 @@ public class MapsActivity extends AppCompatActivity
     private static final String KEY_LOCATIONDATA = "key_gps_latlng";
     private static LatLng mRouteDestinationLatLng;
     private static LatLng mRouteCurrentPositionLatLng;
+    private static boolean DESTINATION_LOCATION_SELECTED = false;
+    private static boolean CURRENT_LOCATION_SELECTED = false;
 
     private Marker mDestinationMarker;
 
@@ -90,6 +94,7 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onMapReady(GoogleMap map) {
+        map.setOnMapClickListener(this);
         map.setOnMapLongClickListener(this);
         mMap = map;
         mMap.setOnMyLocationButtonClickListener(this);
@@ -155,14 +160,35 @@ public class MapsActivity extends AppCompatActivity
     }
 
     public void onMapLongClick(LatLng point) {
+
+        if (CURRENT_LOCATION_SELECTED == false) {
+
+            Toast.makeText(this, "select a starting position", Toast.LENGTH_SHORT).show();
+
+        } else if (CURRENT_LOCATION_SELECTED == true && DESTINATION_LOCATION_SELECTED == false) {
+            mDestinationMarker = mMap.addMarker(new MarkerOptions()
+                    .position(point)
+                    .title("Destination")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            DESTINATION_LOCATION_SELECTED = true;
+            //Toast.makeText(this, "OnMapLongClick Clicked" + point, Toast.LENGTH_SHORT).show();
+            mRouteDestinationLatLng = point;
+        } else {
+            Toast.makeText(this, "It is not possible to set Two Destinations Resetting map", Toast.LENGTH_LONG).show();
+            onMapReset();
+
+        }
+    }
+
+    public void onMapClick(LatLng point) {
         onMapReset();
         mDestinationMarker = mMap.addMarker(new MarkerOptions()
                 .position(point)
-                .title("Destination")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-        Toast.makeText(this,"OnMapLongClick Clicked" + point, Toast.LENGTH_SHORT).show();
-        mRouteDestinationLatLng = point;
-        Toast.makeText(this, ""+mRouteDestinationLatLng, Toast.LENGTH_SHORT).show();
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        //Toast.makeText(this,"OnMapClick Clicked" + point, Toast.LENGTH_SHORT).show();
+        CURRENT_LOCATION_SELECTED = true;
+        mRouteCurrentPositionLatLng = point;
     }
 
     //check if there is any markers on the map
@@ -173,12 +199,15 @@ public class MapsActivity extends AppCompatActivity
         return true;
     }
 
-    //reset any markers on the map, otherwise they will stack
+    // Reset any markers on the map, otherwise they will stack
+    // Reset map click values to false
     public void onMapReset() {
         if (!mapStatus()) {
             return;
         }
         mMap.clear();
+        CURRENT_LOCATION_SELECTED = false;
+        DESTINATION_LOCATION_SELECTED = false;
     }
 
 }
