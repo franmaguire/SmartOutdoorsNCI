@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SmartOutdoors</string>
     <string name="title_activity_maps">Select Destination</string>
+    <string name="google_server_api">AIzaSyA_WrpoePiNDpgI79qubAQBvQxiUxlAzwA</string>
 
     <!--    Permissions    -->
     <string name="permission_rationale_location">Access to the location service is required to demonstrate the \'my location\'  the \'blue GPS dot\' feature, which shows your current location on the map.</string>

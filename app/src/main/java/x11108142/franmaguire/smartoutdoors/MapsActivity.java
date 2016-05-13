@@ -3,6 +3,7 @@ package x11108142.franmaguire.smartoutdoors;
 import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +27,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,16 +41,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends AppCompatActivity
         implements
         OnMapReadyCallback,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
-        ActivityCompat.OnRequestPermissionsResultCallback {
+        ActivityCompat.OnRequestPermissionsResultCallback, DirectionCallback {
 
     private static final String PREFERENCES_DATA = "x11108142.franmaguire.smartoutdoors";
     private static final String KEY_LOCATIONDATA = "key_gps_latlng";
+    private static final String SERVER_API_KEY = "AIzaSyA_WrpoePiNDpgI79qubAQBvQxiUxlAzwA";
     private static LatLng mRouteDestinationLatLng;
     private static LatLng mRouteCurrentPositionLatLng;
     private static boolean DESTINATION_LOCATION_SELECTED = false;
@@ -96,6 +106,7 @@ public class MapsActivity extends AppCompatActivity
     public void onMapReady(GoogleMap map) {
         map.setOnMapClickListener(this);
         map.setOnMapLongClickListener(this);
+        map.setOnMarkerClickListener(this);
         mMap = map;
         mMap.setOnMyLocationButtonClickListener(this);
         enableMyLocation();
@@ -189,6 +200,37 @@ public class MapsActivity extends AppCompatActivity
         //Toast.makeText(this,"OnMapClick Clicked" + point, Toast.LENGTH_SHORT).show();
         CURRENT_LOCATION_SELECTED = true;
         mRouteCurrentPositionLatLng = point;
+    }
+
+    public boolean onMarkerClick(Marker marker){
+
+        requestDirection();
+
+        // returning false allows the methods in the event to the called but prevents the default activity of a button click
+        // allowing destination/ current location labels to appear over marker
+        return false;
+
+    }
+    public void requestDirection() {
+        GoogleDirection.withServerKey(SERVER_API_KEY)
+                .from(mRouteCurrentPositionLatLng)
+                .to(mRouteDestinationLatLng)
+                .transportMode(TransportMode.DRIVING)
+                .execute(this);
+    }
+
+
+    public void onDirectionSuccess(Direction direction, String rawBody) {
+        Toast.makeText(this, "Success with status : " + direction.getStatus(), Toast.LENGTH_SHORT).show();
+        if (direction.isOK()) {
+
+            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+            mMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, Color.RED));
+        }
+    }
+
+    public void onDirectionFailure(Throwable t) {
+        Toast.makeText(this, t.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     //check if there is any markers on the map
