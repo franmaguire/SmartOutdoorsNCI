@@ -8,6 +8,165 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="x11108142.franmaguire.smartoutdoors.PredictionActivity">
+    tools:context=".weather.PredictionActivity"
+    android:background="@drawable/bg_gradient">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/networkRequestProgressBar"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/updateScreenLabel"
+                android:layout_alignStart="@+id/networkRequestProgressBar"
+                android:layout_alignEnd="@+id/networkRequestProgressBar"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="353dp"
+            android:weightSum="1">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="340dp"
+                android:layout_weight="0.76">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stormLabel"
+                    android:id="@+id/stormLabel"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:paddingLeft="12sp"
+                    android:layout_marginTop="24dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9 km"
+                    android:id="@+id/stormDistanceLabel"
+                    android:textColor="@android:color/white"
+                    android:textSize="40dp"
+                    android:paddingLeft="12sp"
+                    android:paddingBottom="20dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Intensity"
+                    android:id="@+id/rainVolumeLabel"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:paddingLeft="12sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Heavy"
+                    android:id="@+id/precipitationTypeLabel"
+                    android:textColor="@android:color/white"
+                    android:textSize="40dp"
+                    android:paddingLeft="12sp"
+                    android:paddingBottom="20dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Wind Speed"
+                    android:id="@+id/windLabel"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:paddingLeft="12sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="76 kph"
+                    android:id="@+id/windSpeedLabel"
+                    android:textColor="@android:color/white"
+                    android:textSize="40dp"
+                    android:paddingLeft="12sp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="340dp"
+                android:weightSum="1"
+                android:layout_marginLeft="24dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Real Feel Temp"
+                    android:id="@+id/apparentTempDisplayLabel"
+                    android:contextClickable="false"
+                    android:textSize="20sp"
+                    android:textColor="#ffffff"
+                    android:layout_marginTop="24dp"
+                    android:allowUndo="true"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="4"
+                    android:id="@+id/apparentTempLabel"
+                    android:textColor="@android:color/white"
+                    android:textSize="90dp"
+                    android:nestedScrollingEnabled="false"
+                    android:clickable="false"
+                    android:gravity="center_horizontal"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/weatherIconImageView"
+                    android:src="@mipmap/snow"
+                    android:layout_weight="0.40"
+                    android:layout_marginTop="24dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/destinationLabel"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="20dp"
+            android:textColor="#ffffff"
+            android:text="Ballyedmonduff Co. Dublin"
+            android:singleLine="true"
+            android:maxWidth="300dp"
+            android:allowUndo="true"
+            android:layout_gravity="center_horizontal"
+            />
+
+    </LinearLayout>
+
 
 </RelativeLayout>

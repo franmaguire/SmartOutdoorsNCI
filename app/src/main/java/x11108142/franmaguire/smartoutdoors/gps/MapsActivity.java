@@ -1,13 +1,15 @@
-package x11108142.franmaguire.smartoutdoors;
+package x11108142.franmaguire.smartoutdoors.gps;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+
+import org.joda.time.DateTime;
+
 
 /**
  * The methods from "MyLocationDemoActivity" where used in this activity AND the entire class "PermissionUtils" was added to this project
@@ -16,6 +18,7 @@ import android.support.v4.app.FragmentActivity;
  * The methods from MyLocationDemoActivity were reused as they performed the functionality required
  * The class PermissionUtils was resued, It was a utility class that manages access to runtime permissions
  *
+ * The class "SimpleLocation" is from delight.im <info@delight.im>, a library to access location features of Google Maps API V2
  *
  *
  * */
@@ -24,15 +27,21 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.Step;
+import com.akexorcist.googledirection.model.TimeInfo;
+import com.akexorcist.googledirection.model.TransitDetail;
 import com.akexorcist.googledirection.util.DirectionConverter;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -41,7 +50,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import x11108142.franmaguire.smartoutdoors.weather.PredictionActivity;
+import x11108142.franmaguire.smartoutdoors.R;
 
 public class MapsActivity extends AppCompatActivity
         implements
@@ -50,13 +65,18 @@ public class MapsActivity extends AppCompatActivity
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerClickListener,
         GoogleMap.OnMyLocationButtonClickListener,
-        ActivityCompat.OnRequestPermissionsResultCallback, DirectionCallback {
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        DirectionCallback {
 
     private static final String PREFERENCES_DATA = "x11108142.franmaguire.smartoutdoors";
     private static final String KEY_LOCATIONDATA = "key_gps_latlng";
-    private static final String SERVER_API_KEY = "AIzaSyA_WrpoePiNDpgI79qubAQBvQxiUxlAzwA";
-    private static LatLng mRouteDestinationLatLng;
-    private static LatLng mRouteCurrentPositionLatLng;
+    private static final String SERVER_API_KEY = "AIzaSyD3DkfS6KgbwVoEIsqI4bOThO0dBOzf3C0";
+    private static final String PREDICTION_START = "prediction_start";//
+    private static final String PREDICTION_LOCATION = "prediction_location";//
+
+    private static LatLng mRouteDestinationLatLng;//
+    private static LatLng mRouteCurrentPositionLatLng;//
+    private static String mRouteDuration;//time to pass to weather activity
     private static boolean DESTINATION_LOCATION_SELECTED = false;
     private static boolean CURRENT_LOCATION_SELECTED = false;
 
@@ -79,6 +99,26 @@ public class MapsActivity extends AppCompatActivity
     private SharedPreferences.Editor mEditor;
     private static String mMappingData;
 
+
+    /**
+     * Current lat and long
+     */
+    double latitude, longitude;
+
+    SupportMapFragment mFragment;
+
+    private SimpleLocation mLocation;
+
+    double latDestination, longDestination;
+
+    //DISTANCE BETWEEN LOCATIONS AND THE DESTINATION ADDRESS
+
+    String distance = "";
+
+    String destination = "";
+
+    String mRequestAddress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +128,13 @@ public class MapsActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // construct a new instance
+        mLocation = new SimpleLocation(this);
+        // if we can't access the location yet, prompt the user to enable location access
+        if (!mLocation.hasLocationEnabled()) {
+
+            SimpleLocation.openSettings(this);
+        }
 
         mSharedPreferences = getSharedPreferences(PREFERENCES_DATA, Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();
@@ -108,10 +155,13 @@ public class MapsActivity extends AppCompatActivity
         map.setOnMapLongClickListener(this);
         map.setOnMarkerClickListener(this);
         mMap = map;
-        mMap.setOnMyLocationButtonClickListener(this);
+        map.setOnMyLocationButtonClickListener(this);
         enableMyLocation();
 
+        //SET THE CURRENT INFORMATION TO THE PREFERENCES
 
+        mSharedPreferences.edit().putString("lat", String.valueOf(latitude)).commit();
+        mSharedPreferences.edit().putString("long", String.valueOf(longitude)).commit();
     }
     /**
      * Enables the My Location layer if the fine location permission has been granted.
@@ -133,8 +183,13 @@ public class MapsActivity extends AppCompatActivity
     public boolean onMyLocationButtonClick() {
         // Return false so that we don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
+       //latDestination = mLocation.getLatitude();
+       //longDestination = mLocation.getLongitude();
         return false;
+
     }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -170,6 +225,18 @@ public class MapsActivity extends AppCompatActivity
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
 
+
+    public void onMapClick(LatLng point) {
+        onMapReset();
+        mDestinationMarker = mMap.addMarker(new MarkerOptions()
+                .position(point)
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        //Toast.makeText(this,"OnMapClick Clicked" + point, Toast.LENGTH_SHORT).show();
+        CURRENT_LOCATION_SELECTED = true;
+        mRouteCurrentPositionLatLng = point;
+
+    }
     public void onMapLongClick(LatLng point) {
 
         if (CURRENT_LOCATION_SELECTED == false) {
@@ -189,18 +256,11 @@ public class MapsActivity extends AppCompatActivity
             onMapReset();
 
         }
+        latDestination = point.latitude;
+        longDestination = point.longitude;
     }
 
-    public void onMapClick(LatLng point) {
-        onMapReset();
-        mDestinationMarker = mMap.addMarker(new MarkerOptions()
-                .position(point)
-                .title("Start")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        //Toast.makeText(this,"OnMapClick Clicked" + point, Toast.LENGTH_SHORT).show();
-        CURRENT_LOCATION_SELECTED = true;
-        mRouteCurrentPositionLatLng = point;
-    }
+
 
     public boolean onMarkerClick(Marker marker){
 
@@ -226,6 +286,17 @@ public class MapsActivity extends AppCompatActivity
 
             ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
             mMap.addPolyline(DirectionConverter.createPolyline(this, directionPositionList, 5, Color.RED));
+            Route route = direction.getRouteList().get(0);
+            Leg leg = route.getLegList().get(0);
+            String addressInfo = leg.getEndAddress();
+            mRequestAddress = addressInfo.toString();
+            //TimeInfo mapRoute = leg.getArrivalTime();
+            //List<Step> stepList = leg.getStepList();
+            Info durationInfo = leg.getDuration();
+            mRouteDuration = durationInfo.getText();
+
+            Toast.makeText(this, "The time to travel is  : " + mRouteDuration, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "The location is  : " + mRequestAddress, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -250,6 +321,65 @@ public class MapsActivity extends AppCompatActivity
         mMap.clear();
         CURRENT_LOCATION_SELECTED = false;
         DESTINATION_LOCATION_SELECTED = false;
+    }
+
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        if (item.getItemId() == R.id.menu_prediction) {
+
+            mSharedPreferences.edit().putString("KEY_DESTINATION", String.valueOf(mRouteDestinationLatLng)).commit();
+            mSharedPreferences.edit().putString("KEY_TIME", String.valueOf(mRouteDuration)).commit();
+
+            Intent intent = new Intent(this, PredictionActivity.class);
+            //intent.putExtra("predictionDestination", mRouteDestinationLatLng);
+            intent.putExtra("routeDuration", mRouteDuration);
+            intent.putExtra("destinationAddress", mRequestAddress);
+            intent.putExtra("latitude", latDestination);
+            intent.putExtra("longitude", longDestination);
+            startActivity(intent);
+
+        } else if (item.getItemId() == R.id.menu_destination) {
+
+            mMap.clear();
+
+        }
+        return true;
+    }
+
+    private void startWeatherActivity(String time, LatLng destination){
+        Intent intent = new Intent(this, PredictionActivity.class);
+        intent.putExtra(PREDICTION_START,time);
+        intent.putExtra(PREDICTION_LOCATION, destination);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // make the device update its location
+      //  mLocation.beginUpdates();
+    }
+
+    @Override
+    protected void onPause() {
+        // stop location updates (saves battery)
+        //mLocation.endUpdates();
+
+        super.onPause();
     }
 
 }

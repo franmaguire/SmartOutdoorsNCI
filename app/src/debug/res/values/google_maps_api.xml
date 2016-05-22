@@ -17,5 +17,5 @@
     -->
     <!-- This has setup as not packaged protected so that the package name can be changed during testing -->
     <!-- This has setup as not device protected so that devices I do not own can use my API key -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAPsOhaba8IPoykZ3H7rgHTA7BVbqgvI5I</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyD3DkfS6KgbwVoEIsqI4bOThO0dBOzf3C0</string>
 </resources>
