@@ -65,29 +65,34 @@ public class PredictionActivity extends AppCompatActivity {
         final String locationAddress = extras.getString("destinationAddress");
         final double latitudeDestination = extras.getDouble("latitude");
         final double longitudeDestination = extras.getDouble("longitude");
+        final long unixTimeParam = extras.getLong("unixTime");
 
         mNetworkRequestProgressBar.setVisibility(View.INVISIBLE);
         mUpdateScreenLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getWeatherRequest(latitudeDestination, longitudeDestination);
+                getWeatherRequest(latitudeDestination, longitudeDestination, unixTimeParam);
             }
         });
 
         mDestinationLabel.setText(locationAddress);
-        getWeatherRequest(latitudeDestination, longitudeDestination);
+        getWeatherRequest(latitudeDestination, longitudeDestination, unixTimeParam);
 
     }
 
-    private void getWeatherRequest(double latitude, double longitude) {
+    private void getWeatherRequest(double latitude, double longitude, long unixTime) {
         //result returned in metric
-        String params = "?units=si";
+        String metric = "?units=si";
+        long future = unixTime;
         String forecastUrl = "https://api.forecast.io/forecast/"
                 +DARK_SKY_API_KEY+"/"
                 +latitude
                 +","
                 +longitude
-                +params;
+                +","
+                +future
+                +metric;
+        Log.i(LOG_EVENT, "The forecast request was made with the following url : " + forecastUrl);
         if(isThereAConnection()) {
 
             restartRequest();
@@ -173,8 +178,8 @@ public class PredictionActivity extends AppCompatActivity {
 
         Prediction prediction = mWeather.getPrediction();
         mApparentTempLabel.setText(prediction.getApparentTemp() +"");
-        mPrecipitationTypeLabel.setText(prediction.getPrecipitationIntensity()+" " );//+ prediction.getPrecipitationType() +"");
-        mStormDistanceLabel.setText(prediction.getStormDistance() + " km");
+        mPrecipitationTypeLabel.setText(prediction.getPrecipitationIntensity()+" " + prediction.getPrecipitationType() +"");
+        mStormDistanceLabel.setText(prediction.getStormDistance() + "");
         mWindSpeedLabel.setText(prediction.getWindSpeed()+ " kph");
 
 
@@ -198,16 +203,47 @@ public class PredictionActivity extends AppCompatActivity {
         JSONObject predict = jsonPrediction.getJSONObject("currently");
 
         Prediction prediction = new Prediction();
-        prediction.setStormDistance(predict.getInt("nearestStormDistance"));
-        prediction.setUnixTime(predict.getLong("time"));
-        prediction.setWeatherIcon(predict.getString("icon"));
-        prediction.setPrecipitationIntensity(predict.getDouble("precipIntensity"));
-        //prediction.setPrecipitationType(predict.getString("precipType"));
-        prediction.setWindSpeed(predict.getInt("windSpeed"));
-        prediction.setApparentTemp(predict.getDouble("apparentTemperature"));
-        prediction.setTimeZone(timezone);
 
-        Log.d(LOG_EVENT, prediction.getUseableTime());
+        try {
+            prediction.setStormDistance(predict.getInt("nearestStormDistance"));
+        } catch (JSONException error){
+            Log.e(LOG_EVENT, "Error parsing the Forecast response for storm distance");
+            prediction.setStormDistance(4000);
+        }
+        try {
+            prediction.setWeatherIcon(predict.getString("icon"));
+        } catch (JSONException error){
+            Log.e(LOG_EVENT, "Error parsing the Forecast response for weather icon");
+            prediction.setWeatherIcon("rain");
+        }
+        try {
+            prediction.setPrecipitationIntensity(predict.getDouble("precipIntensity"));
+        } catch (JSONException error){
+            Log.e(LOG_EVENT, "Error parsing the Forecast response for precipitation intensity");
+            prediction.setPrecipitationIntensity(0);
+        }
+        try {
+            prediction.setPrecipitationType(predict.getString("precipType"));
+        } catch (JSONException error){
+            Log.e(LOG_EVENT, "Error parsing the Forecast response for precipitation type");
+            prediction.setPrecipitationType("clear ");
+        }
+        try {
+            prediction.setWindSpeed(predict.getInt("windSpeed"));
+        } catch (JSONException error){
+            Log.e(LOG_EVENT, "Error parsing the Forecast response for wind speed");
+            prediction.setWindSpeed(5);
+        }
+        try {
+            prediction.setApparentTemp(predict.getDouble("apparentTemperature"));
+        } catch (JSONException error){
+            Log.e(LOG_EVENT, "Error parsing the Forecast response for apparent temperature");
+            prediction.setApparentTemp(10);
+        }
+
+            prediction.setTimeZone(timezone);
+
+
         return prediction;
     }
 

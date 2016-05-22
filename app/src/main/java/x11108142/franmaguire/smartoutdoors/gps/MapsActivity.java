@@ -1,6 +1,7 @@
 package x11108142.franmaguire.smartoutdoors.gps;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -27,6 +28,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -73,12 +75,15 @@ public class MapsActivity extends AppCompatActivity
     private static final String SERVER_API_KEY = "AIzaSyD3DkfS6KgbwVoEIsqI4bOThO0dBOzf3C0";
     private static final String PREDICTION_START = "prediction_start";//
     private static final String PREDICTION_LOCATION = "prediction_location";//
+    private static final String LOG_EVENT = MapsActivity.class.getSimpleName(); ;
 
     private static LatLng mRouteDestinationLatLng;//
     private static LatLng mRouteCurrentPositionLatLng;//
     private static String mRouteDuration;//time to pass to weather activity
     private static boolean DESTINATION_LOCATION_SELECTED = false;
     private static boolean CURRENT_LOCATION_SELECTED = false;
+
+    private long mRoutePredictionTime; // convert akexorcist response to unix time
 
     private Marker mDestinationMarker;
 
@@ -104,19 +109,14 @@ public class MapsActivity extends AppCompatActivity
      * Current lat and long
      */
     double latitude, longitude;
-
     SupportMapFragment mFragment;
-
     private SimpleLocation mLocation;
-
     double latDestination, longDestination;
 
     //DISTANCE BETWEEN LOCATIONS AND THE DESTINATION ADDRESS
 
     String distance = "";
-
     String destination = "";
-
     String mRequestAddress;
 
     @Override
@@ -281,7 +281,7 @@ public class MapsActivity extends AppCompatActivity
 
 
     public void onDirectionSuccess(Direction direction, String rawBody) {
-        Toast.makeText(this, "Success with status : " + direction.getStatus(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "MAP Service Response : " + direction.getStatus(), Toast.LENGTH_SHORT).show();
         if (direction.isOK()) {
 
             ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
@@ -290,14 +290,89 @@ public class MapsActivity extends AppCompatActivity
             Leg leg = route.getLegList().get(0);
             String addressInfo = leg.getEndAddress();
             mRequestAddress = addressInfo.toString();
+            Info distanceInfo = leg.getDistance();
+            String distance = distanceInfo.getText();
+            calcRouteDuration(distance);
             //TimeInfo mapRoute = leg.getArrivalTime();
             //List<Step> stepList = leg.getStepList();
             Info durationInfo = leg.getDuration();
             mRouteDuration = durationInfo.getText();
-
             Toast.makeText(this, "The time to travel is  : " + mRouteDuration, Toast.LENGTH_SHORT).show();
             Toast.makeText(this, "The location is  : " + mRequestAddress, Toast.LENGTH_SHORT).show();
+            Log.i(LOG_EVENT, "From Unix time stamp: "+ mRoutePredictionTime);
+
+
         }
+    }
+
+    public void calcRouteDuration(String distance){
+        double distanceString = Double.valueOf(distance.substring(0,distance.indexOf(" km")));
+        //double distanceString = Integer.parseInt(distance);
+        long HOUR_IN_SECONDS = 60*60;
+        long millis = System.currentTimeMillis();
+        //AKExorcist library doesnt output duration in mins, it outputs as a string in hours and mins
+        //eg 4 hours 3 mins.  Whereas google api outputs in mins. Instead of building a parsing function
+        // i will create approximate journey time in mins based on average speed of 60 kph over length of journey
+        if(distanceString > 0 && distanceString <= 60)
+        {
+            mRoutePredictionTime = millis/1000;
+        }
+        else if(distanceString > 60 && distanceString <= 140)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS);
+        }
+        else if(distanceString > 140 && distanceString <= 240)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*2);
+        }
+        else if(distanceString > 240 && distanceString <= 300)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*3);
+        }
+        else if(distanceString > 300 && distanceString <= 360)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*4);
+        }
+        else if(distanceString > 360 && distanceString <= 420)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*5);
+        }
+        else if(distanceString > 420 && distanceString <= 480)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*6);
+        }
+        else if(distanceString > 480 && distanceString <= 540)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*7);
+        }
+        else if(distanceString > 540 && distanceString <= 600)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*8);
+        }
+        else if(distanceString > 600 && distanceString <= 660)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*9);
+        }
+        else if(distanceString > 660 && distanceString <= 720)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*10);
+        }
+        else if(distanceString > 720 && distanceString <= 780)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*11);
+        }
+        else if(distanceString > 780 && distanceString <= 840)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*12);
+        }
+        else if(distanceString > 840 && distanceString <= 900)
+            {
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*13);
+        }
+        else if(distanceString > 900){
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*14);
+        }
+
     }
 
     public void onDirectionFailure(Throwable t) {
@@ -323,9 +398,6 @@ public class MapsActivity extends AppCompatActivity
         DESTINATION_LOCATION_SELECTED = false;
     }
 
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
 
@@ -340,8 +412,8 @@ public class MapsActivity extends AppCompatActivity
 
         if (item.getItemId() == R.id.menu_prediction) {
 
-            mSharedPreferences.edit().putString("KEY_DESTINATION", String.valueOf(mRouteDestinationLatLng)).commit();
-            mSharedPreferences.edit().putString("KEY_TIME", String.valueOf(mRouteDuration)).commit();
+            mSharedPreferences.edit().putString("KEY_DESTINATION", String.valueOf(mRouteDestinationLatLng)).apply();
+            mSharedPreferences.edit().putString("KEY_TIME", String.valueOf(mRouteDuration)).apply();
 
             Intent intent = new Intent(this, PredictionActivity.class);
             //intent.putExtra("predictionDestination", mRouteDestinationLatLng);
@@ -349,6 +421,7 @@ public class MapsActivity extends AppCompatActivity
             intent.putExtra("destinationAddress", mRequestAddress);
             intent.putExtra("latitude", latDestination);
             intent.putExtra("longitude", longDestination);
+            intent.putExtra("unixTime",mRoutePredictionTime);
             startActivity(intent);
 
         } else if (item.getItemId() == R.id.menu_destination) {

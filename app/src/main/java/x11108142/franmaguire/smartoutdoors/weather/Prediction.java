@@ -46,22 +46,6 @@ public class Prediction {
         mTimeZone = timeZone;
     }
 
-    public String getUseableTime(){
-        SimpleDateFormat newTime = new SimpleDateFormat("h:mm a ");
-        newTime.setTimeZone(TimeZone.getTimeZone(getTimeZone()));
-        Date dateTime = new Date(getUnixTime() * 1000);
-        String time = newTime.format(dateTime);
-
-        return time;
-    }
-    public long getUnixTime() {
-        return mUnixTime;
-    }
-
-    public void setUnixTime(long unixTime) {
-        mUnixTime = unixTime;
-    }
-
     public int getApparentTemp() {
         return (int)Math.round(mApparentTemp);
     }
@@ -72,12 +56,18 @@ public class Prediction {
 
     public String getStormDistance() {
         String stormDistance = "";
+        String stormError = "";
+        String distanceFlag =" km";
         if (mStormDistance == 0){
             stormDistance = "0";
-        } else if(mStormDistance > 0){
+        } else if(mStormDistance > 0 && mStormDistance < 4000){
             stormDistance = mStormDistance + "";
+        } else if(mStormDistance == 4000){
+            stormError = "None";
+            distanceFlag = "";
         }
-        return mStormMessage = stormDistance;
+
+        return mStormMessage = stormError + stormDistance + distanceFlag;
      }
 
     public void setStormDistance(int stormDistance) {
@@ -88,7 +78,7 @@ public class Prediction {
     public String getPrecipitationIntensity(){
         String precipitationString = "";
         if(mPrecipitationIntensity==0){
-            precipitationString = "" +"and dry";
+            precipitationString = "dry";
         } else if(mPrecipitationIntensity > 0 || mPrecipitationIntensity < mPrecipLight){
             precipitationString = "light";
         } else if (mPrecipitationIntensity>mPrecipLight || mPrecipitationIntensity<mPrecipModerate){
@@ -107,10 +97,6 @@ public class Prediction {
 
     public String getPrecipitationType() {
 
-        String precipitationType = "";
-        if(mPrecipitationType == null){
-            mPrecipitationType = "clear";
-        }
         return mPrecipitationType;
     }
 
