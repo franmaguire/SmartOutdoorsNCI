@@ -317,60 +317,60 @@ public class MapsActivity extends AppCompatActivity
         {
             mRoutePredictionTime = millis/1000;
         }
-        else if(distanceString > 60 && distanceString <= 140)
-            {
-            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS);
-        }
-        else if(distanceString > 140 && distanceString <= 240)
+        else if(distanceString > 60 && distanceString <= 110)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*2);
         }
-        else if(distanceString > 240 && distanceString <= 300)
+        else if(distanceString > 140 && distanceString <= 240)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*3);
         }
-        else if(distanceString > 300 && distanceString <= 360)
+        else if(distanceString > 240 && distanceString <= 300)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*4);
         }
-        else if(distanceString > 360 && distanceString <= 420)
+        else if(distanceString > 300 && distanceString <= 360)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*5);
         }
-        else if(distanceString > 420 && distanceString <= 480)
+        else if(distanceString > 360 && distanceString <= 420)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*6);
         }
-        else if(distanceString > 480 && distanceString <= 540)
+        else if(distanceString > 420 && distanceString <= 480)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*7);
         }
-        else if(distanceString > 540 && distanceString <= 600)
+        else if(distanceString > 480 && distanceString <= 540)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*8);
         }
-        else if(distanceString > 600 && distanceString <= 660)
+        else if(distanceString > 540 && distanceString <= 600)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*9);
         }
-        else if(distanceString > 660 && distanceString <= 720)
+        else if(distanceString > 600 && distanceString <= 660)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*10);
         }
-        else if(distanceString > 720 && distanceString <= 780)
+        else if(distanceString > 660 && distanceString <= 720)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*11);
         }
-        else if(distanceString > 780 && distanceString <= 840)
+        else if(distanceString > 720 && distanceString <= 780)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*12);
         }
-        else if(distanceString > 840 && distanceString <= 900)
+        else if(distanceString > 780 && distanceString <= 840)
             {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*13);
         }
-        else if(distanceString > 900){
+        else if(distanceString > 840 && distanceString <= 900)
+            {
             mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*14);
+        }
+        else if(distanceString > 900){
+            mRoutePredictionTime = ((millis/1000)+HOUR_IN_SECONDS*15);
         }
 
     }

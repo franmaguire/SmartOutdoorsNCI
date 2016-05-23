@@ -39,6 +39,17 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TIME"
+            android:id="@+id/timeLabel"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/networkRequestProgressBar"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#80FFFFFF"
+            android:textSize="20dp"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -49,31 +60,31 @@
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="340dp"
-                android:layout_weight="0.76"
+                android:layout_weight="0.83"
                 android:weightSum="1">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/stormLabel"
                     android:id="@+id/stormLabel"
                     android:textColor="#ffffff"
                     android:textSize="20sp"
                     android:paddingLeft="12dp"
-                    android:layout_marginTop="24dp"/>
+                    android:layout_marginTop="12dp"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="9 km"
                     android:id="@+id/stormDistanceLabel"
                     android:textColor="@android:color/white"
-                    android:textSize="40sp"
+                    android:textSize="36sp"
                     android:paddingLeft="12sp"
                     android:paddingBottom="20dp"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Rain Intensity"
                     android:id="@+id/rainVolumeLabel"
@@ -82,17 +93,17 @@
                     android:paddingLeft="12sp"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Heavy"
                     android:id="@+id/precipitationTypeLabel"
                     android:textColor="@android:color/white"
-                    android:textSize="40dp"
+                    android:textSize="36sp"
                     android:paddingLeft="12sp"
                     android:paddingBottom="20dp"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Wind Speed"
                     android:id="@+id/windLabel"
@@ -101,12 +112,12 @@
                     android:paddingLeft="12sp"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="76 kph"
                     android:id="@+id/windSpeedLabel"
                     android:textColor="@android:color/white"
-                    android:textSize="40dp"
+                    android:textSize="36sp"
                     android:paddingLeft="12sp"
                     android:layout_weight="0.18"/>
 
@@ -117,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="340dp"
                 android:weightSum="1"
-                android:layout_marginLeft="24dp"
+                android:layout_marginLeft="12dp"
                 >
 
                 <TextView
@@ -128,7 +139,7 @@
                     android:contextClickable="false"
                     android:textSize="20sp"
                     android:textColor="#ffffff"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="12dp"
                     android:allowUndo="true"/>
 
                 <TextView
@@ -137,7 +148,7 @@
                     android:text="4"
                     android:id="@+id/apparentTempLabel"
                     android:textColor="@android:color/white"
-                    android:textSize="90dp"
+                    android:textSize="84sp"
                     android:nestedScrollingEnabled="false"
                     android:clickable="false"
                     android:gravity="center_horizontal"/>

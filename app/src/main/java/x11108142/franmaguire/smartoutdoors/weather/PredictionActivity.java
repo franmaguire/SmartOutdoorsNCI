@@ -18,6 +18,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,6 +45,7 @@ public class PredictionActivity extends AppCompatActivity {
 
 
     @Bind(R.id.apparentTempLabel) TextView mApparentTempLabel;
+    @Bind(R.id.timeLabel) TextView mTimeLabel;
     @Bind(R.id.updateScreenLabel) ImageView mUpdateScreenLabel;
 //    @Bind(R.id.degreeLabel) TextView mDegreeLabel;
     @Bind(R.id.stormDistanceLabel) TextView mStormDistanceLabel;
@@ -52,6 +56,7 @@ public class PredictionActivity extends AppCompatActivity {
     @Bind(R.id.networkRequestProgressBar) ProgressBar mNetworkRequestProgressBar;
 
     private Weather mWeather;
+    private String unixTimeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,9 @@ public class PredictionActivity extends AppCompatActivity {
         final double longitudeDestination = extras.getDouble("longitude");
         final long unixTimeParam = extras.getLong("unixTime");
 
+        //time for journey
+        unixTimeString = convertUnixTime(unixTimeParam);
+
         mNetworkRequestProgressBar.setVisibility(View.INVISIBLE);
         mUpdateScreenLabel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +83,9 @@ public class PredictionActivity extends AppCompatActivity {
             }
         });
 
+
         mDestinationLabel.setText(locationAddress);
+
         getWeatherRequest(latitudeDestination, longitudeDestination, unixTimeParam);
 
     }
@@ -175,14 +185,12 @@ public class PredictionActivity extends AppCompatActivity {
     }
 
     private void screenUpdate() {
-
         Prediction prediction = mWeather.getPrediction();
+        mTimeLabel.setText(unixTimeString+"");
         mApparentTempLabel.setText(prediction.getApparentTemp() +"");
         mPrecipitationTypeLabel.setText(prediction.getPrecipitationIntensity()+" " + prediction.getPrecipitationType() +"");
         mStormDistanceLabel.setText(prediction.getStormDistance() + "");
         mWindSpeedLabel.setText(prediction.getWindSpeed()+ " kph");
-
-
         Drawable drawable = ContextCompat.getDrawable(this, prediction.getWeatherIconId());
         mWeatherIconImageView.setImageDrawable(drawable);
 
@@ -194,6 +202,15 @@ public class PredictionActivity extends AppCompatActivity {
         weather.setPrediction(getPrediction(jsonData));
         return weather;
     }
+    private String convertUnixTime(long unixTime){
+
+        Date date = new Date(unixTime*1000L);
+        SimpleDateFormat simpleTime = new SimpleDateFormat("HH:MM");
+        simpleTime.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String formattedTime = simpleTime.format(date);
+        return formattedTime;
+    }
+
     private Prediction getPrediction (String jsonData) throws JSONException {
 
         JSONObject jsonPrediction = new JSONObject(jsonData);
