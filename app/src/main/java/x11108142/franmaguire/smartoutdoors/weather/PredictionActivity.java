@@ -171,6 +171,8 @@ public class PredictionActivity extends AppCompatActivity {
         }
         Log.d(LOG_EVENT, "Main UI Code is running");
     }
+
+
     private void restartRequest(){
 
         if (mNetworkRequestProgressBar.getVisibility()==View.INVISIBLE) {
