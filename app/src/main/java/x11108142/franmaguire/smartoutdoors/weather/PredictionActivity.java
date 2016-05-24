@@ -45,7 +45,6 @@ public class PredictionActivity extends AppCompatActivity {
 
 
     @Bind(R.id.apparentTempLabel) TextView mApparentTempLabel;
-    @Bind(R.id.timeLabel) TextView mTimeLabel;
     @Bind(R.id.updateScreenLabel) ImageView mUpdateScreenLabel;
 //    @Bind(R.id.degreeLabel) TextView mDegreeLabel;
     @Bind(R.id.stormDistanceLabel) TextView mStormDistanceLabel;
