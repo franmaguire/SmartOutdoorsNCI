@@ -188,7 +188,6 @@ public class PredictionActivity extends AppCompatActivity {
 
     private void screenUpdate() {
         Prediction prediction = mWeather.getPrediction();
-        mTimeLabel.setText(unixTimeString+"");
         mApparentTempLabel.setText(prediction.getApparentTemp() +"");
         mPrecipitationTypeLabel.setText(prediction.getPrecipitationIntensity()+" " + prediction.getPrecipitationType() +"");
         mStormDistanceLabel.setText(prediction.getStormDistance() + "");
