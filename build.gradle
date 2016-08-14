@@ -23,9 +23,6 @@ buildscript {
         mavenCentral()
     }
 
-    dependencies {
-        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.+"
-    }
 }
 
 
