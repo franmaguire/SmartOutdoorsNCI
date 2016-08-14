@@ -14,9 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.newrelic.agent.android.NewRelic;
-import com.newrelic.agent.android.instrumentation.Trace;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -91,7 +88,6 @@ public class PredictionActivity extends AppCompatActivity {
 
     }
 
-    @Trace
     private void getWeatherRequest(double latitude, double longitude, long unixTime) {
 
         //result returned in metric
@@ -107,7 +103,6 @@ public class PredictionActivity extends AppCompatActivity {
                 +metric;
         Log.i(LOG_EVENT, "The forecast request was made with the following url : " + forecastUrl);
 
-        NewRelic.startInteraction("Weather Request");
         if(isThereAConnection()) {
 
             restartRequest();
