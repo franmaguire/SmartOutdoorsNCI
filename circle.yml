@@ -24,7 +24,7 @@ test:
         background: true
         parallel: true
     - ./gradlew assembleDebug
-        timeout: 360
+
 
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/
