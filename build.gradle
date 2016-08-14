@@ -18,6 +18,21 @@ allprojects {
     }
 }
 
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.+"
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }

@@ -1,0 +1,32 @@
+machine:
+  environment:
+    ANDROID_HOME: /usr/local/android-sdk-linux
+    GRADLE_OPTS: -Xmx512m
+
+dependencies:
+      pre:
+        - echo y | android update sdk --no-ui --all --filter "tools"
+        - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.2",platform-tools,android-23,extra-google-m2repository,extra-google-google_play_services,extra-android-support
+        - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
+
+general:
+
+  artifacts:
+      - /home/ubuntu/your-app-name/app/build/outputs/apk/
+  branches:
+    only:
+      - master # build master
+      - /fb-*.*/ # build feature branches, update for your branch prefixes if you use them
+
+test:
+  override:
+    - $ANDROID_HOME/tools/emulator -avd testing -no-window -no-boot-anim -no-audio:
+        background: true
+        parallel: true
+    - ./gradlew assembleDebug
+        timeout: 360
+
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/
+    - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
+
