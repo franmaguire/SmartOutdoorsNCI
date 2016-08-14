@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "481480912131",
+    "project_id": "default-demo-app-ebf39"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481480912131:android:0b4f302548d0dac0",
+        "android_client_info": {
+          "package_name": "x11108142.franmaguire.smartoutdoors"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "481480912131-b9r9jic9gomupnte0hkhv8rc0dqnhc3i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "x11108142.franmaguire.smartoutdoors",
+            "certificate_hash": "FEB3A7F01C5D7AE194A23CF2787FBA5706F82A0F"
+          }
+        },
+        {
+          "client_id": "481480912131-bsvoujnrirnk45blg5711lehj8kpl9l5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBiw5ACtXIwJvlLNH7q8TjZyXVd1yEcxM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
