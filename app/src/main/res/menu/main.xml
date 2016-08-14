@@ -12,6 +12,6 @@
         android:id="@+id/menu_destination"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="@string/select_destination"/>
+        android:title="@string/reset"/>
 
 </menu>
