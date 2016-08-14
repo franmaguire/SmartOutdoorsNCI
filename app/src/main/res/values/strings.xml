@@ -2,13 +2,16 @@
     <!--    Application Strings   -->
     <string name="app_name">SmartOutdoors</string>
     <string name="title_application">Smart Outdoors</string>
-    <string name="title_activity_maps">Select Destination</string>
+    <string name="title_activity_maps">Smart Outdoors</string>
     <string name="show_prediction">Show Prediction</string>
-    <string name="select_destination">Select Destination</string>
+    <string name="reset">Reset Map</string>
     <string name="network_unavailable_message">There is no available network to connect to, Please try again.</string>
     <string name="destinationLabel">Getting the destination Address</string>
 
     <string name="empty_prediction_value">--</string>
+    <string name="empty_distance_value">-- km</string>
+    <string name="empty_type_value">--</string>
+    <string name="empty_wind_value">-- kph</string>
 
     <!--    API Strings    -->
     <string name="google_app_id">x11108142.franmaguire.smartoutdoors</string>

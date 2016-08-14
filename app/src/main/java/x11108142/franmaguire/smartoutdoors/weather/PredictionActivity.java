@@ -14,6 +14,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.newrelic.agent.android.NewRelic;
+import com.newrelic.agent.android.instrumentation.Trace;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,6 +74,7 @@ public class PredictionActivity extends AppCompatActivity {
         final double longitudeDestination = extras.getDouble("longitude");
         final long unixTimeParam = extras.getLong("unixTime");
 
+
         //time for journey
         unixTimeString = convertUnixTime(unixTimeParam);
 
@@ -82,18 +86,18 @@ public class PredictionActivity extends AppCompatActivity {
             }
         });
 
-
         mDestinationLabel.setText(locationAddress);
-
         getWeatherRequest(latitudeDestination, longitudeDestination, unixTimeParam);
 
     }
 
+    @Trace
     private void getWeatherRequest(double latitude, double longitude, long unixTime) {
+
         //result returned in metric
         String metric = "?units=si";
         long future = unixTime;
-        String forecastUrl = "https://api.forecast.io/forecast/"
+        final String forecastUrl = "https://api.forecast.io/forecast/"
                 +DARK_SKY_API_KEY+"/"
                 +latitude
                 +","
@@ -102,6 +106,8 @@ public class PredictionActivity extends AppCompatActivity {
                 +future
                 +metric;
         Log.i(LOG_EVENT, "The forecast request was made with the following url : " + forecastUrl);
+
+        NewRelic.startInteraction("Weather Request");
         if(isThereAConnection()) {
 
             restartRequest();
@@ -259,7 +265,6 @@ public class PredictionActivity extends AppCompatActivity {
         }
 
             prediction.setTimeZone(timezone);
-
 
         return prediction;
     }
