@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import com.newrelic.agent.android.NewRelic;
 
 import org.joda.time.DateTime;
 
@@ -54,7 +53,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.newrelic.agent.android.instrumentation.Trace;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -127,8 +125,6 @@ public class MapsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        NewRelic.withApplicationToken("AA032993996f5252cf9a0fa77f6e34fea86b612951")
-                .start(this.getApplication());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -158,9 +154,7 @@ public class MapsActivity extends AppCompatActivity
      */
 
     @Override
-    @Trace
     public void onMapReady(GoogleMap map) {
-        NewRelic.startInteraction("Map git Request");
         map.setOnMapClickListener(this);
         map.setOnMapLongClickListener(this);
         map.setOnMarkerClickListener(this);
