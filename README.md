@@ -1,5 +1,6 @@
 # Smart Outdoors
 ## Status https://circleci.com/gh/franmaguire/SmartOutdoorsNCI.png?circle-token=:circle-token
+[![CircleCI](https://circleci.com/gh/franmaguire/SmartOutdoorsNCI.svg?style=svg)](https://circleci.com/gh/franmaguire/SmartOutdoorsNCI)
 
 The idea for this project was simple, **Help make weather and travel decisions easier**.  
 
